@@ -1,12 +1,14 @@
 import argparse
 import subprocess
 import os
+import fnmatch
 
-def SearchOutput(name, path):
+def SearchOutput(pattern, path):
     response = False
     for root, dirs, files in os.walk(path):
-        if name in files:
-             response = True
+        for name in files:
+             if fnmatch.fnmatch(name, pattern):
+                response = True
     return response
 
 
@@ -20,8 +22,17 @@ def Converter(infile, outdir, annovar):
         print("Converting failed!")
     return result
 
-#def Reducer(avinput, outdir, annovar):
-
+def Reducer(avinput, outdir, annovar):
+    script = annovar + "variants_reduction.pl"
+    humandb = annovar + "humandb/"
+    result = avinput[:-8] + ".reduced"
+    settings = "-protocol nonsyn_splicing,genomicSuperDups,phastConsElements46way,kaviar_20150923,exac03 -operation g,rr,r,f,f -remove -aaf_threshold 0.00001 -buildver hg19"
+    retcode = subprocess.call("perl" + " " + script + " " + avinput + " " + humandb + " " + settings + " -out " + result, shell=True)
+    if retcode == 0:
+        print("Reduction passed!")
+    else:
+        print("Reduction failed!")
+    return result
 
 parser = argparse.ArgumentParser("NMDsearch", add_help=False)
 parser.add_argument('--vcf', type=str, help="Annotate the input VCF-file")
@@ -47,6 +58,14 @@ if args.vcf:
         print("Converting output: " + avinput)
     else:
         print("Output file " + name + " already exists!")
+
+    redinput = args.output + name
+    name2 = args.vcf[:-4] + ".reduced*"
+    if SearchOutput(name2, path) == False:
+        reduced = Reducer(redinput, args.output, args.annovar)
+        print("Reduction output: " + reduced)
+    else:
+        print("Output file " + name2 + " already exists!")
 
 
 elif args.folder:
