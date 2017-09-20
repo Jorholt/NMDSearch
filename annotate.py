@@ -45,7 +45,7 @@ def Annotater(reduced, annovar):
         print("Annotation failed!")
     return result
 
-parser = argparse.ArgumentParser("NMDsearch", add_help=False)
+parser = argparse.ArgumentParser("Annotate VCF", add_help=False)
 parser.add_argument('--vcf', type=str, help="Annotate the input VCF-file")
 parser.add_argument('--folder', type=str, help="Annotate all VCF within a folder")
 parser.add_argument('--output', type=str, default=None, help="The output is stored in this folder")
