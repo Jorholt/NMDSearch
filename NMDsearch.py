@@ -1,4 +1,5 @@
 import argparse
+import csv
 
 parser = argparse.ArgumentParser("Filter NMD genes", add_help=False)
 parser.add_argument('--csv', type=str, help="Select csv-file to be filterd")
@@ -12,30 +13,22 @@ genes = Genefile.read()
 geneList = genes.splitlines()
 Genefile.close()
 
-#print(geneList)
-#print(geneList[:10])
-#print(geneList[-10:])
+with open(args.csv, 'r') as CSVfile:
+    variants = list(csv.reader(CSVfile))
 
-csv = args.csv
-CSVfile = open(csv)
-variantfile = CSVfile.read()
-variants = variantfile.splitlines()
-CSVfile.close()
-
-print(csv)
-
-header = variants[0].split(sep=",")
-#print(header)
+header = variants[0]
 Geneindex = header.index("Gene.refGene")
 
 outfile = []
-outfile.append(variants[0])
+outfile.append(header)
 
 for i in range(1, len(variants)):
-    line = variants[i].split(sep=",")
-#    print(line[Geneindex])
-    if line[Geneindex] in geneList:
-        print(line[Geneindex])
+    if variants[i][Geneindex] in geneList:
         outfile.append(variants[i])
 
-#print(outfile[:10])
+filename = args.csv[:-4] + "." +  args.genes[:-4] + ".csv"
+print(filename)
+with open(filename, "w") as myfile:
+    wr = csv.writer(myfile, quoting=csv.QUOTE_MINIMAL)
+    for row in outfile:
+        wr.writerow(row)
