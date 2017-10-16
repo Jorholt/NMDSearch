@@ -56,7 +56,7 @@ args, unknown = parser.parse_known_args()
 programDirectory = os.path.dirname(os.path.abspath(__file__))
 
 if args.vcf:
-    parser = argparse.ArgumentParser("NMDsearch", add_help=False)
+    parser = argparse.ArgumentParser("Annotate VCF", add_help=False)
     parser.add_argument('--vcf', type=str, help="Annotate the input VCF-file")
     parser.add_argument('--output', type=str, default=None, help="The output is stored in this folder")
     parser.add_argument('--annovar', type=str, default=None, help="Location of annovar")
@@ -94,5 +94,3 @@ elif args.folder:
     parser.add_argument('--output', type=str, default=None, help="The output is stored in this folder")
     parser.add_argument('--annovar', type=str, default=None, help="Location of annovar")
     args = parser.parse_args()
-
-#print(args.vcf, args.output, args.annovar)
